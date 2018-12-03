@@ -77,7 +77,31 @@ Dáta zastávok pochádzajú priamo z OSM databázy, ktorá bola imporotvaná pomocou o
 
 ## Mapa a GeoJson
 Geojson je generovanı priamo pri dopytoch nad databázou pouitím funkcie `st_asgeojson`.
-Na frontende sa vytvára custom layer pre zobrazovanie bodov na mape.
+Na frontende sa vytvára custom layer pre zobrazovanie bodov na mape. Vdy pri kadom scenári, ak u existuje táto vytvorená layer, tak sa vymae a násedne sa pod¾a nového scenára vytvorí nová. 
+Nová layer obsahuje pole bodov, ktoré sa majú na mape zobrazi. Jej pridávanie do mapy je priamo ukázané v nasledujúcom kóde. Features sú vloené ako geojson, ktorı sa vytvoril pri dopyte nad databázou a bol mierne upravenı. Najskôr sa do mapy pridá source, ktorı je vloenı do vytvorenej vrstvy:
+```javascript
+this.map.addSource("sourcMap", {
+          type: "geojson",
+          data: {
+            type: "FeatureCollection",
+            features: this.geoJsonData
+          }
+        });
+
+        var layer = {
+          id: "points",
+          type: "symbol",
+          source: "sourcMap",
+          layout: {
+            "icon-image": "circle-15",
+            "text-field": "{title}",
+            "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
+            "text-offset": [0, 0.6],
+            "text-anchor": "top"
+          }
+        };
+        this.map.addLayer(layer);
+```
 
 ## Indexy
 Pre zrıchlenie dopytov boli pouité indey nad všetkımi ståpcami `way` v tabu¾kách `planet_osm_point`, `planet_osm_lines` a `planet_osm_polygon` a nad ståpcom `public_transport` v tabulke  `planet_osm_point`
