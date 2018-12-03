@@ -4,15 +4,18 @@ Aplikácia zobrazuje zastávky v Bratislave a jej okolí (v okolitıch dedinách). Hl
 
 1. zobrazenie všetkıch zastávok vo zvolenej mestskej èasti
 	- Pri naèítaní stránky sa najskôr z databázy vybeu všetky mestské èasti Bratislavy a dediny v okolí mesta. Ich názvy sú poskytnuté pouívate¾ovi na vıber v selectboxe. Po vıbere mestskej èasti sa na mape zobrazia všetky zástavky v danej èasti na mape. Zobrazované sú zástavky oboch smerov (reprezentujúce nástupištia).
-`select  p.name,  ST_AsGeoJSON(ST_Transform(p.way, 4326))as geometry from planet_osm_point p 
+```sql
+select  p.name,  ST_AsGeoJSON(ST_Transform(p.way, 4326))as geometry from planet_osm_point p 
  cross join planet_osm_polygon o 
- where o.admin_level = '9' and st_equals(o.way, [zadaná way polygónu]) and p.public_transport like '%platform%' and ST_contains(o.way,p.way)`
+ where o.admin_level = '9' and st_equals(o.way, [zadaná way polygónu]) and p.public_transport like '%platform%' and ST_contains(o.way,p.way)
+```
 
 2. zobrazenie všetkıch zastávok, ktoré sa nachádzajú na tej ceste, ku ktorej má pozícia pouívateåa najblišie, a zobrazenie aj tıch zastávok ktoré sa nachádzajú na cestách, ktoré sú prepojené s touto najblišou cestou.
 	- Po stlaèení tlaèidla na oznaèenie polohy pouívateåa (v lavom hornom rohu obrazovky) sa vyh¾adá najblišia cesta, ktorá sa od pouívateåa nachádza. Následne sa nájdu všetky cesty, ktoré sú prepojené s touto najblišou cestou. Na všetkıch tıchto cestách sa vyh¾adajú zastávky a zobrazia na mape.
 	- Príklad selectu pre danú pozíciu:
 
-`WITH nierest AS (
+```sql
+WITH nierest AS (
 select  l.name,l.way, ST_AsGeoJSON(ST_Transform(l.way, 4326))as geometry, ST_distance(ST_GeomFromText('POINT(17.064271599999998 48.15826)',4326)::geography, ST_Transform(l.way,4326)::geography) as distance from planet_osm_line l
 where l.highway   is not null
 order by distance
@@ -22,15 +25,18 @@ cross join planet_osm_line k
 cross join planet_osm_point p
 where p.public_transport like '%platform%' 
 and st_intersects(k.way, n.way)
-and st_contains(k.way, p.way)`
+and st_contains(k.way, p.way)
+```
 
 3. zobrazenie zastávok v zadanej vzdialenosti od aktuálnej poziicie pouívate¾a 
 	- Pozícia pouívate¾a je inicializovaná na stred mapy. Ak sa pouívate¾ lokalizuje (ako v scenári 2) tak sa pozícia od ktorej sa budú vyyh¾adáva najblišie zastávky zmení. Následne pouívate¾ vyberie vzdialenos a klikne na modrıy button (pod mapou). Systém vyh¾adá najblišie zastávky od pozície pouívate¾a a zobrazí ich na mape. 
 	- Príklad selectu pre danú pozíciu a vzdialenos 300 metrov:
 
-`select  p.name, ST_AsGeoJSON(ST_Transform(p.way, 4326))as geometry, ST_distance(ST_GeomFromText('POINT(17.064271599999998 48.15826)',4326)::geography, ST_Transform(p.way,4326)::geography) from planet_osm_point p
+```sql
+select  p.name, ST_AsGeoJSON(ST_Transform(p.way, 4326))as geometry, ST_distance(ST_GeomFromText('POINT(17.064271599999998 48.15826)',4326)::geography, ST_Transform(p.way,4326)::geography) from planet_osm_point p
 where p.public_transport like '%platform%' 
-and ST_distance(ST_GeomFromText('POINT(17.064271599999998 48.15826)',4326)::geography, ST_Transform(p.way,4326)::geography) < '300'`
+and ST_distance(ST_GeomFromText('POINT(17.064271599999998 48.15826)',4326)::geography, ST_Transform(p.way,4326)::geography) < '300'
+```
 
 
 Takto vyzerá aplikácia v akcii:
