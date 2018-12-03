@@ -4,6 +4,15 @@ Aplikácia zobrazuje zastávky v Bratislave a jej okolí (v okolitých dedinách). Hl
 
 1. zobrazenie všetkých zastávok vo zvolenej mestskej èasti
 	- Pri naèítaní stránky sa najskôr z databázy vybeu všetky mestské èasti Bratislavy a dediny v okolí mesta. Ich názvy sú poskytnuté používate¾ovi na výber v selectboxe. Po výbere mestskej èasti sa na mape zobrazia všetky zástavky v danej èasti na mape. Zobrazované sú zástavky oboch smerov (reprezentujúce nástupištia).
+	- Select pre výber všetkých mestských èastiach:
+```sql
+      select  o.name, o.way from planet_osm_point p 
+       cross join planet_osm_polygon o 
+       where p.public_transport like '%platform%' and o.name is not null and o.admin_level = '9' and ST_contains(o.way,p.way) 
+       group by o.way, o.name 
+       order by o.name
+```
+	- Select pre nájdenie všetkých zastávok v mestskej èasti
 ```sql
 select  p.name,  ST_AsGeoJSON(ST_Transform(p.way, 4326))as geometry from planet_osm_point p 
  cross join planet_osm_polygon o 
