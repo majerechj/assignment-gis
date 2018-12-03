@@ -74,10 +74,12 @@ Je naprogramovanı pomocou node.js. Jeho hlavnı kód sa nachádza v súbore `majerec
 ## Data
 
 Dáta zastávok pochádzajú priamo z OSM databázy, ktorá bola imporotvaná pomocou oms2pgsql. Obsahuje Bratislavu a jej širšie okolie. Ve¾kos dát je 0,35GB
+
+## GeoJson
 Geojson je generovanı priamo pri dopytoch nad databázou pouitím funkcie `st_asgeojson`.
+Na frontende sa vytvára custom layer pre zobrazovanie bodov na mape.
 
-
-##Indexy
+## Indexy
 Pre zrıchlenie dopytov boli pouité indey nad všetkımi ståpcami `way` v tabu¾kách `planet_osm_point`, `planet_osm_lines` a `planet_osm_polygon` a nad ståpcom `public_transport` v tabulke  `planet_osm_point`
 `create index platforms_index on planet_osm_point (public_transport)
 create index point_way_index on planet_osm_point (way)
