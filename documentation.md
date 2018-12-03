@@ -12,7 +12,9 @@ Aplikácia zobrazuje zastávky v Bratislave a jej okolí (v okolitých dedinách). Hl
        group by o.way, o.name 
        order by o.name
 ```
-	- Select pre nájdenie všetkých zastávok v mestskej èasti
+
+	- Select pre nájdenie všetkých zastávok v mestskej èasti:
+
 ```sql
 select  p.name,  ST_AsGeoJSON(ST_Transform(p.way, 4326))as geometry from planet_osm_point p 
  cross join planet_osm_polygon o 
